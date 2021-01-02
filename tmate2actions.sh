@@ -91,6 +91,11 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=20})); do
     echo ""
     echo ""
     PRT_COUNT=$((${PRT_COUNT} + 1))
+    # 若提示信息没有循环完毕直接执行此语句结束
+        if [[ -e ${CONTINUE_FILE} ]]; then
+         echo -e "${INFO} Continue to the next step."
+         exit 0
+        fi
     sleep 15
 done
 
