@@ -33,7 +33,7 @@ if [[ -n "$(uname | grep Linux)" ]]; then
 elif [[ -x "$(command -v brew)" ]]; then
     brew install tmate
 else
-    echo -e "${ERROR} This system is not supported!"
+    echo -e "${ERROR} This system is not supported Tmate!"
     exit 1
 fi
 
@@ -76,21 +76,21 @@ if [[ -n "${TELEGRAM_BOT_TOKEN}" && -n "${TELEGRAM_CHAT_ID}" ]]; then
     fi
 fi
 
-while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
-    SECONDS_LEFT=${PRT_INTERVAL_SEC:=10}
+while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=20})); do
+    
     echo "-----------------------------------------------------------------------------------"
-    echo "--连接至SSH实例----${PRT_COUNT} / ${PRT_TOTAL:=10}-----------------------------------"
+    echo "--连接至SSH实例----${PRT_COUNT} / ${PRT_TOTAL:=10} / 15s-----------------------------------"
     echo "-----------------------------------------------------------------------------------"
-    echo "连接至此VM实例:"
     echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
     echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
+    echo "-----------------------------------------------------------------------------------"
     echo -e "TIPS: 执行 'touch ${KEEPALIVE_FILE}' 禁用30分钟超时规则."
     echo "-----------------------------------------------------------------------------------"
     echo "-----------------------------------------------------------------------------------"
     echo ""
     echo ""
     PRT_COUNT=$((${PRT_COUNT} + 1))
-    sleep 10
+    sleep 15
 done
 
 # 
