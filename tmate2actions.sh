@@ -75,18 +75,19 @@ fi
 
 while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     SECONDS_LEFT=${PRT_INTERVAL_SEC:=10}
-    while ((${PRT_COUNT} > 1)) && ((${SECONDS_LEFT} > 0)); do
-        echo -e "${INFO} (${PRT_COUNT}/${PRT_TOTAL}) Please wait ${SECONDS_LEFT}s ..."
-        sleep 1
-        SECONDS_LEFT=$((${SECONDS_LEFT} - 1))
-    done
     echo "-----------------------------------------------------------------------------------"
-    echo "To connect to this session copy and paste the following into a terminal or browser:"
+    echo "--连接至SSH实例----${PRT_COUNT} / ${PRT_TOTAL:=10}-----------------------------------"
+    echo "-----------------------------------------------------------------------------------"
+    echo "连接至此VM实例:"
     echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
     echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
-    echo -e "TIPS: Run 'touch ${CONTINUE_FILE}' to continue to the next step."
+    echo -e "TIPS: 执行 'touch ${CONTINUE_FILE}' 禁用连接超时."
     echo "-----------------------------------------------------------------------------------"
+    echo "-----------------------------------------------------------------------------------"
+    echo ""
+    echo ""
     PRT_COUNT=$((${PRT_COUNT} + 1))
+    sleep 10
 done
 
 while [[ -S ${TMATE_SOCK} ]]; do
