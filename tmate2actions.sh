@@ -21,7 +21,10 @@ INFO="[${Green_font_prefix}INFO${Font_color_suffix}]"
 ERROR="[${Red_font_prefix}ERROR${Font_color_suffix}]"
 TMATE_SOCK="/tmp/tmate.sock"
 TELEGRAM_LOG="/tmp/telegram.log"
+
 CONTINUE_FILE="/tmp/continue"
+
+KEEPALIVE_FILE="/tmp/keepalive"
 
 # Install tmate on macOS or Ubuntu
 echo -e "${INFO} Setting up tmate ..."
@@ -81,7 +84,7 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     echo "连接至此VM实例:"
     echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
     echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
-    echo -e "TIPS: 执行 'touch ${CONTINUE_FILE}' 禁用连接超时."
+    echo -e "TIPS: 执行 'touch ${KEEPALIVE_FILE}' 禁用30分钟超时规则."
     echo "-----------------------------------------------------------------------------------"
     echo "-----------------------------------------------------------------------------------"
     echo ""
@@ -90,11 +93,25 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     sleep 10
 done
 
-while [[ -S ${TMATE_SOCK} ]]; do
-    sleep 1
-    if [[ -e ${CONTINUE_FILE} ]]; then
-        echo -e "${INFO} Continue to the next step."
-        exit 0
+# 
+# while [[ -S ${TMATE_SOCK} ]]; do
+#     sleep 1
+#     if [[ -e ${CONTINUE_FILE} ]]; then
+#         echo -e "${INFO} Continue to the next step."
+#         exit 0
+#     fi
+# done
+
+# Wait for connection to close or timeout in 30 min 会话超时时间
+timeout=30
+while [ -S ${TMATE_SOCK} ]; do
+    sleep 60
+    timeout=$(($timeout - 1))
+    if [ ! -f ${KEEPALIVE_FILE} ]; then
+        if ((timeout < 0)); then
+            echo Waiting on tmate connection timed out!
+            exit 0
+        fi
     fi
 done
 
