@@ -84,7 +84,8 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=20})); do
     echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
     echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
     echo "-----------------------------------------------------------------------------------"
-    echo -e "TIPS: 执行 'touch ${KEEPALIVE_FILE}' 禁用30分钟超时规则."
+    echo -e "TIPS: 执行 'touch ${KEEPALIVE_FILE}' 禁用30分钟会话超时规则."
+    echo -e "      执行 'touch ${CONTINUE_FILE}' 进行后续操作."
     echo "-----------------------------------------------------------------------------------"
     echo "-----------------------------------------------------------------------------------"
     echo ""
@@ -93,7 +94,7 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=20})); do
     sleep 15
 done
 
-# 
+# 当执行 touch /tmp/continue 后执行后续操作，会话使用ctrl D 结束即可，无超时时间。
 # while [[ -S ${TMATE_SOCK} ]]; do
 #     sleep 1
 #     if [[ -e ${CONTINUE_FILE} ]]; then
@@ -102,10 +103,12 @@ done
 #     fi
 # done
 
+
 # Wait for connection to close or timeout in 30 min 会话超时时间
-timeout=30
+# 当执行 touch /tmp/keepalive 后会话持续保持。ctrl D手动结束会话
+timeout=180
 while [ -S ${TMATE_SOCK} ]; do
-    sleep 60
+    sleep 10
     timeout=$(($timeout - 1))
     if [ ! -f ${KEEPALIVE_FILE} ]; then
         if ((timeout < 0)); then
@@ -113,6 +116,9 @@ while [ -S ${TMATE_SOCK} ]; do
             exit 0
         fi
     fi
+    if [[ -e ${CONTINUE_FILE} ]]; then
+         echo -e "${INFO} Continue to the next step."
+         exit 0
+    fi
 done
 
-# ref: https://github.com/csexton/debugger-action/blob/master/script.sh
